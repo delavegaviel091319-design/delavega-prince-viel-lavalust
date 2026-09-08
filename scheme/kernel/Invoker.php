@@ -175,11 +175,19 @@ class Invoker {
 			return $LAVA->properties[$obj_name];
 		}
 
+		// Ensure database is loaded for models
+		if (!isset($LAVA->db)) {
+			$database = load_class('database', 'database');
+			$LAVA->db = $database::instance(NULL);
+		}
+
 		if ($module) {
 			$path = APP_DIR . "modules/{$module}/models/" . ($nested ? "{$nested}/" : '') . "{$this->class}.php";
 			if (file_exists($path)) {
 				require_once $path;
-				$LAVA->properties[$obj_name] = new $this->class();
+				$model = new $this->class();
+				$model->db = $LAVA->db;
+				$LAVA->properties[$obj_name] = $model;
 				return $LAVA->properties[$obj_name];
 			}
 		}
@@ -187,7 +195,9 @@ class Invoker {
 		$path = APP_DIR . "models/" . ($nested ? "{$nested}/" : '') . "{$this->class}.php";
 		if (file_exists($path)) {
 			require_once $path;
-			$LAVA->properties[$obj_name] = new $this->class();
+			$model = new $this->class();
+			$model->db = $LAVA->db;
+			$LAVA->properties[$obj_name] = $model;
 			return $LAVA->properties[$obj_name];
 		}
 
