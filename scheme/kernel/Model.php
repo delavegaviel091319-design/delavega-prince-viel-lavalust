@@ -151,6 +151,13 @@ class Model {
      */
     protected $with = [];
 
+    /**
+     * Database Connection Instance
+     *
+     * @var object
+     */
+    public $db;
+
       /**
      * Class Constructor
      * @return void

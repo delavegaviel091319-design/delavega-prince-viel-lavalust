@@ -45,3 +45,19 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 /** @var object $router **/
 
 $router->get('/', 'Welcome::index');
+$router->get('/users', 'UsersController::index');
+
+// Auth — must stay unprotected
+$router->any('/login', 'AuthController::login');
+$router->get('/logout', 'AuthController::logout');
+
+// Products CRUD — protected by AuthMiddleware
+$router->group(
+    ['prefix' => '/products', 'middleware' => 'auth'],
+    function ($router) {
+        $router->get('/', 'ProductController::index');
+        $router->any('/create', 'ProductController::create');
+        $router->any('/edit/{id}', 'ProductController::edit');
+        $router->any('/delete/{id}', 'ProductController::delete');
+    }
+);
